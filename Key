@@ -1,0 +1,78 @@
+public class Key{
+   public static int numKeys=0;
+   private String original;
+   private String code;
+   private int ID;
+   private boolean isSet;
+   
+   public Key(){
+      numKeys++;
+      ID=numKeys;
+      original="";
+      code="";
+      isSet=false;
+   }
+    
+   public boolean setKey(String o,String c){
+      if(validKey(o,c)==true){
+         original=o;
+         code=c;
+         isSet=true;
+      
+         return true;
+      }
+      else {
+      //since it was asked to set them as empty strings if false//
+         original="";
+         code="";
+         isSet=false;
+      
+         return false;
+      }
+   }
+    
+   private boolean validKey(String o,String c){
+    
+      if(o.length()!=c.length())
+         return false;
+    //checking if they both have the same length,if not returns false then leaves the method//
+   
+      for (int i=0;i<c.length();i++){
+         char ch=c.charAt(i);
+         if(o.indexOf(ch)==-1)
+            return false;
+      //if they dont have the same charecters it will return false, then leaves method//
+      }
+      return true;
+   }
+    
+   public void displayMe(){
+      System.out.println("+-------+");
+      System.out.println("| key#"+ID+" |");
+      if(isSet==false)
+         System.out.println("|Not set|");
+      else{
+         System.out.println("|set    |");
+         System.out.println("|---+---|");
+         System.out.println("| o | c |");
+         System.out.println("|---+---|");
+         for(int i=0;i<original.length();i++)
+            System.out.println("| "+original.charAt(i)+" | "+code.charAt(i)+" |");
+      }
+      System.out.println("+-------+");
+   }
+    
+    //since the variables are private we need getters //
+   public boolean getIsSet(){
+      return isSet;
+   }
+   public String getOriginal(){
+      return original;
+   }
+   public String getCode(){
+      return code;
+   }
+   public int getID(){
+      return ID;
+   }
+}
