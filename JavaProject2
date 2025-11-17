@@ -1,0 +1,338 @@
+/*
+
+== CSC 111 project - phase 2 ==
+
+- Lab Instructor: Awabed Jibreen
+- Section number: 41994
+
+Reyouf Alakeel - 446202906
+Rana Alshehri -  446202276
+
+*/
+
+import java.util.*;
+
+public class JavaProject2{
+
+   // Global variables //
+   static int systemPin;
+   static boolean pinCondition=false;
+   static Scanner input = new Scanner(System.in);
+   
+   public static void main (String[] args)
+   {      
+      int task;
+      boolean sentence1Entered = false;
+      boolean sentence2Entered = false;
+   
+      
+      System.out.println(" ===  Welcome to CSC 111 project (Phase 2) === ");
+      setPin();
+     //method calling to set the pin code//
+     
+      // objects //
+      Key key1=new Key();
+      Key key2=new Key();
+      Key key3=new Key();
+      
+      SecureSentence sentence1=new SecureSentence();
+      SecureSentence sentence2=new SecureSentence();
+      SecureSentence current=null;
+      
+      boolean entered;
+   
+      
+      // Main menu //
+      do {        
+         task=menu();
+         switch(task)
+         {
+            // Set/Change a key //
+            case 1:
+               System.out.print("Enter your PIN code:");
+               int pin=input.nextInt();
+               if(pinMatches(pin)==false){
+                  System.out.println("Invalid pin");
+                  break;
+               }    
+               System.out.println("choose key(1-3):");
+               int keyNum=input.nextInt();
+               if(keyNum<1||keyNum>3){
+                  System.out.println("Invalid key number!");
+                  break;
+                  //leaves and goes back to menu//
+               }
+                 
+               System.out.println("Enter original Characters:");
+               input.nextLine();
+            //for cleaning garbage//
+               String original=input.nextLine();
+            
+               System.out.println("Enter code Characters:");
+               String code=input.nextLine();
+            
+               if(keyNum==1 && key1.setKey(original,code))
+                  System.out.println("the key is set succesfully!");
+               else if (keyNum==2 && key2.setKey(original,code))
+                  System.out.println("the key is set succesfully!");
+               else if(keyNum==3 && key3.setKey(original,code))
+                  System.out.println("the key is set succesfully!");
+               else 
+                  System.out.println("Invalid key, key cleared");
+               break;
+         
+            // Display all keys
+            case 2:
+               System.out.print("Enter your PIN:");
+               pin=input.nextInt();
+               if(pinMatches(pin)==false){
+                  System.out.println("Invalid pin");
+                  break;
+               }
+               System.out.println("The number of keys is:"+Key.numKeys);
+               key1.displayMe();
+               key2.displayMe();
+               key3.displayMe();
+            
+               break;
+         
+             
+            // Select a SecureSentence object to process //            
+            case 3:
+               System.out.println("Please select SecureSentence object (1-2): ");
+               int sentenceNum=input.nextInt();
+               if(sentenceNum==1){
+                  current=sentence1;
+                  System.out.println("SecureSentence object 1 has been selected.");
+               }
+               else if(sentenceNum==2){
+                  current=sentence2;
+                  System.out.println("SecureSentence object 2 has been selected.");
+               }
+               else{
+                  System.out.println("Invalid SecureSentence object selection.");
+               }
+               break;
+            
+               
+            // Enter a sentence for current SecureSentence object //
+            case 4:
+               // Check if current sentence exists //
+               if(current==null){
+                  System.out.println("You must select a SecureSentence object first.");
+                  break;
+               }
+               
+               System.out.println("Enter a sentence:");
+               input.nextLine();
+               String currentSentence=input.nextLine();
+               System.out.println("Sentence is set successfully.");
+               
+               System.out.println("Has this sentence already been encrypted? (Y/N)");
+               char answer=input.next().charAt(0);
+               // If user types in yes, current sentence key info is updated accordingly //
+               if(answer=='y'||answer=='Y'){ 
+                  System.out.println("Please enter the key ID used for encryption:");
+                  int keyId=input.nextInt();
+               
+                  if (key1.getID() == keyId && key1.getIsSet()== true){
+                     current.setSentence(currentSentence , key1);
+                     if(current == sentence1)
+                        sentence1Entered = true;
+                     else
+                        sentence2Entered = true;
+                  } 
+                  else 
+                     if (key2.getID() == keyId && key2.getIsSet()== true){ 
+                        current.setSentence(currentSentence , key2);
+                        if(current == sentence1)
+                           sentence1Entered = true;
+                        else
+                           sentence2Entered = true;
+                     }
+                     else 
+                        if (key3.getID() == keyId && key3.getIsSet()== true) {
+                           current.setSentence(currentSentence , key3);
+                           if(current == sentence1)
+                              sentence1Entered = true;
+                           else
+                              sentence2Entered = true;
+                        }
+                        else 
+                           System.out.println("Invalid key ID number or key not set.");
+               
+               } else {
+                  current.setSentence(currentSentence);
+                  
+                  if(current == sentence1)
+                     sentence1Entered = true;
+                  else
+                     sentence2Entered = true;
+               }
+               break;
+               
+               
+            // Display sentence of current SecureSentence object //
+            case 5: 
+               // Check if current sentence exists //
+               if (current==null){
+                  System.out.println("You must select a SecureSentence object first.");
+                  break;
+               }            
+            
+               // Check if there is a sentence //
+               entered = (current==sentence1?sentence1Entered:sentence2Entered);
+               if(!entered){
+                  System.out.println("You must enter sentence first.");
+                  break;
+               }
+            
+                         
+               current.displayMe();
+               break;
+         
+           // Encrypt sentence of current SecureSentence object and display it //
+            case 6:
+               // Check if current sentence exists //
+               if(current==null){
+                  System.out.println("You must select a SecureSentence object first.");
+                  break;
+               }
+               // Check if there is a sentence //
+               entered = (current==sentence1?sentence1Entered:sentence2Entered);
+               if(!entered){
+                  System.out.println("You must enter sentence first.");
+                  break;
+               }
+            
+                                          
+               System.out.println("Enter the key ID number (1-3):");
+               keyNum=input.nextInt();
+               if(keyNum < 1 || keyNum > 3) {
+                  System.out.println("Invalid key ID number.");
+                  break; 
+               }
+                 
+               // Encryption done based on which key was chosen //
+               if (keyNum == 1)  current.encrypt(key1);
+               else 
+                  if (keyNum == 2) current.encrypt(key2);
+                  else 
+                     current.encrypt(key3);
+               break;
+         
+         
+         
+            // Decrypt sentence of current SecureSentence object and display it //
+            case 7:
+               // Check if current sentence exists //
+               if (current == null) {
+                  System.out.println("You must select a SecureSentence object first.");
+                  break;
+               }            
+               
+               // Check if there is a sentence //
+               entered = (current==sentence1?sentence1Entered:sentence2Entered);
+               if(!entered){
+                  System.out.println("You must enter sentence first.");
+                  break;
+               }
+              
+               current.decrypt();
+               break;
+         
+               
+               
+            // Display all SecureSentence objects //
+            case 8:
+               // Check which sentence is the current sentence //
+               if (sentence1 == current) 
+                  System.out.println("Sentence 1 (current sentence): ");
+               else
+                  System.out.println("Sentence 1: ");
+            
+               sentence1.displayMe();
+               
+               System.out.println("===============");
+            
+               if (sentence2 == current) 
+                  System.out.println("Sentence 2 (current sentence): ");
+               else
+                  System.out.println("Sentence 2: ");
+               sentence2.displayMe();
+               break;
+            
+            
+            
+            // Exit the system //
+            case 9:
+               System.out.println("Thanks for trying out our system!");
+               break;      
+         
+         // If user enters number out of menu bounds (1-9) //
+            default:
+               System.out.println("Invalid choice: please choose a number between 1-9");
+               break;
+         
+         }       
+       
+      } while(task!=9);
+      
+        
+   }
+
+   public static void setPin(){
+      String pin="";
+         // The initial value is false so it enters the while loop //
+      while (pinCondition==false){
+         System.out.println("Enter a 4-digit PIN number that does not start with zero: ");
+         pin=input.next();
+         pinCondition=true;
+         
+        // Checking the conditons of the PIN //     
+         if(pin.length()!=4 ||pin.charAt(0)=='0'){
+            System.out.println("Invalid PIN: longer than four characters or starts with 0");
+            pinCondition=false;
+            continue;
+            //go back and ask the user for a new code//
+         }
+         
+         for (int a=0 ; a<pin.length() ;a++){
+            if(pin.charAt(a)<'0' || pin.charAt(a)>'9'){
+               pinCondition=false;
+               System.out.println("Invalid PIN: must only consist of digits.");
+               break;
+            }
+              
+         }
+      }
+      systemPin=Integer.parseInt(pin);
+      System.out.println("PIN is set successfully");
+   }
+    
+    
+   private static boolean pinMatches(int pin){
+      return pin==systemPin;
+     //if the condition is true it will return true,else it will return false//
+
+   }
+
+
+
+   public static int menu(){
+      
+      System.out.println("        ====   MENU   ====      ");
+      System.out.println("1. Set/Change a key (requires PIN).");
+      System.out.println("2. Display all keys (requires PIN).");
+      System.out.println("3. Select a SecureSentence object to process.");
+      System.out.println("4. Enter a sentence for current SecureSentence object.");
+      System.out.println("5. Display sentence of current SecureSentence object.");
+      System.out.println("6. Encrypt sentence of current SecureSentence object and display it.");
+      System.out.println("7. Decrypt sentence of current SecureSentence object and display it.");
+      System.out.println("8. Display all SecureSentence objects.");
+      System.out.println("9. Exit the system.");
+      System.out.print("Enter task wanted: ");
+      int task=input.nextInt();
+      return task;
+   }
+}
