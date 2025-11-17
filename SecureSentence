@@ -1,0 +1,104 @@
+public class SecureSentence{
+   private String sentence;
+   private Key keyUsed=null; 
+   private boolean encrypted; 
+   
+   // Default constructer //
+   public SecureSentence(){
+      sentence="";
+      keyUsed=null;
+      encrypted=false;
+   }
+   
+   
+   public void setSentence(String s){
+      sentence=s;
+      encrypted=false;
+      keyUsed=null; 
+   }
+
+   public void setSentence(String s, Key key){
+      sentence=s;
+      encrypted=true;
+      keyUsed=key; 
+   }
+
+   public void encrypt(Key key){
+      // Check if sentence is already encrypted //
+      if(isEncrypted()==true){
+         System.out.println("Sentence already encrypted!");
+         return;
+      }
+      
+      // Check if chosen key has been set yet //
+      if(key.getIsSet()==false){
+         System.out.println("Key has not been set.");
+         return;
+      }
+         
+      String tempSentence="";
+      for(int i=0 ; i < sentence.length() ; i++){
+         char sentenceChar = sentence.charAt(i);
+         int originIndex = key.getOriginal().indexOf(sentenceChar);
+         if(originIndex != -1) 
+            tempSentence = tempSentence + key.getCode().charAt(originIndex);
+         else
+            tempSentence = tempSentence + sentenceChar;
+         
+      }
+      // Assign and reassign variables accordingly //
+      sentence= tempSentence;
+      encrypted=true;
+      keyUsed=key;
+            
+      // Display encrypted sentence //
+      System.out.println("Encrypted sentence: "+ sentence);
+    
+   }
+
+
+   public void decrypt(){
+      // Check if sentence is already decrypted //
+      if (isEncrypted()==false){
+         System.out.println("Sentence already decrypted!");
+         return;
+      }
+      
+      String tempSentence="";
+      for(int i=0 ; i < sentence.length() ; i++){
+         char sentenceChar = sentence.charAt(i);
+         int codeIndex = keyUsed.getCode().indexOf(sentenceChar);
+         if(codeIndex != -1)
+            tempSentence = tempSentence + keyUsed.getOriginal().charAt(codeIndex);
+         else
+            tempSentence = tempSentence + sentenceChar;
+      }
+      
+      // Assign and reassign variables accordingly //
+      sentence= tempSentence;
+      encrypted=false;
+      keyUsed=null;
+      
+      // Display decrypted sentence //
+      System.out.println("Decrypted sentence: "+ sentence);
+       
+   }
+ 
+  
+   public void displayMe(){
+      System.out.println("Sentence: "+sentence);
+      System.out.println("Encrypted: "+ encrypted);
+      if(keyUsed!=null){
+         System.out.println("Key used: ");
+         keyUsed.displayMe();
+      }
+      else
+         System.out.println("Key used: none");
+   }
+   
+   // Returns true if the sentence is encrypted, otherwise false //
+   public boolean isEncrypted(){
+      return encrypted;
+   }
+
+}
